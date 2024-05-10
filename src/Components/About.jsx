@@ -5,7 +5,7 @@ import coding from "../assets/coding.jpg";
 
 function About() {
   return (
-    <div>
+    <div id="about">
       <section class="text-gray-600 body-font ">
         <div class="container px-5 py-5 mx-auto text-center ">
           <div className="text-center">
@@ -182,7 +182,7 @@ function About() {
               />
             </div>
           </div>
-          <div class="flex items-center lg:w-4/5 mx-auto border-b pb-10 mb-10 border-gray-200 sm:flex-row flex-col pt-10">
+          <div class="flex items-center lg:w-4/5 mx-auto pb-10 mb-10 border-gray-200 sm:flex-row flex-col pt-10">
             <div class="sm:w-2/5 sm:h-48 h-56 w-full sm:mr-10 inline-flex items-center justify-center  flex-shrink-0">
               <img
                 alt=""

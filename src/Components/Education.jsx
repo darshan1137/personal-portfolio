@@ -2,12 +2,12 @@ import React from "react";
 
 function Education() {
   return (
-    <div>
-      <section className="text-gray-600 body-font sm:px-24 border-grey-200 border-b pb-10">
-        <div className="container px-5 mx-auto">
+    <div id="education" className="bg-[#EEF7FF]">
+      <section className="text-gray-600 body-font sm:px-24 border-grey-200 border-b pb-10 ">
+        <div className="container px-5 py-5 mx-auto ">
           <div className="text-center mb-20">
             <div className="text-center">
-              <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+              <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl ">
                 Education
               </h1>
             </div>
@@ -35,8 +35,10 @@ function Education() {
                 </h2>
                 <p className="leading-relaxed text-base">
                   <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400 text-left">
-                    <li>Currently a Third Year Student</li>
-                    <li>GCPA (till Semester 3) - 9.61</li>
+                    <li>Currently a Third Year Student in CMPN</li>
+                    <li>
+                      Part of Technical Socities and participation in events
+                    </li>
                   </ul>
                 </p>
               </div>

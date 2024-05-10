@@ -2,9 +2,9 @@ import React from "react";
 
 function Experience() {
   return (
-    <div>
+    <div id="experience">
       <section class="text-gray-600 body-font sm:px-24 px-5">
-        <div class="container px-5 mx-auto">
+        <div class="container px-5 py-5 mx-auto">
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
             <div className="rounded-lg">
               <div class="text-center mb-20">
@@ -17,7 +17,7 @@ function Experience() {
                   <div class="w-16 h-1 rounded-full bg-indigo-500 inline-flex"></div>
                 </div>
               </div>
-              <section class="text-gray-600 body-font">
+              <section class="text-gray-600 body-font" id="tech-stack">
                 <div class="container px-5 mx-auto">
                   <div class="flex flex-wrap -m-4 text-center">
                     <div class="lg:w-1/4 md:w-1/2 p-4 w-full">

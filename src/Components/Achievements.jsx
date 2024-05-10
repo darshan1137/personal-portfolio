@@ -7,9 +7,9 @@ import sem4 from "../assets/sem4_topper.jpg";
 
 function Achievements() {
   return (
-    <div>
+    <div id="achievements" className="bg-[#EEF7FF]">
       <section class="text-gray-600 body-font ">
-        <div class="container px-5 py-24 mx-auto sm:px-24">
+        <div class="container px-5 py-10 mx-auto sm:px-24">
           <div className="text-center mb-5">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">

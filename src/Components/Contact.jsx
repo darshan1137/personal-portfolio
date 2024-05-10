@@ -38,8 +38,8 @@ function Contact() {
   };
 
   return (
-    <div>
-      <div className="my-6">
+    <div id="connect" className="bg-[#EEF7FF]">
+      <div className=" p-10">
         <div className="grid sm:grid-cols-2 items-center gap-16 p-8 mx-auto max-w-4xl bg-white shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] rounded-md text-[#333] font-[sans-serif]">
           <div>
             <h1 class="text-3xl font-extrabold">Let's Talk</h1>

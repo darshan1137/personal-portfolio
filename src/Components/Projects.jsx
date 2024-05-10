@@ -6,9 +6,9 @@ import technotho from "../assets/technotho-project.png";
 
 function Projects() {
   return (
-    <div>
+    <div id="projects">
       <section class="text-gray-600 body-font">
-        <div class="container px-5 pb-14 mx-auto">
+        <div class="container px-5 py-10 mx-auto">
           <div class="text-center mb-20">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">

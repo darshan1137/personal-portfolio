@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Navigation from "./Components/navigation";
 import Banner from "./Components/Banner";
 import About from "./Components/About";
@@ -7,11 +7,12 @@ import Education from "./Components/Education";
 import Experience from "./Components/Experience";
 import Contact from "./Components/Contact";
 import Projects from "./Components/Projects";
-import Certifications from "./Components/Certifications";
+import ScrollToTopButton from "./Components/ScrollToTopButton";
 
 function App() {
   return (
     <div className="">
+      <ScrollToTopButton />
       <Navigation />
       <Banner />
       <About />
@@ -19,7 +20,6 @@ function App() {
       <Experience />
       <Achievements />
       <Projects />
-      {/* <Certifications /> */}
       <Contact />
     </div>
   );
