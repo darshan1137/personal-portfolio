@@ -6,6 +6,8 @@ import Achievements from "./Components/Achievements";
 import Education from "./Components/Education";
 import Experience from "./Components/Experience";
 import Contact from "./Components/Contact";
+import Projects from "./Components/Projects";
+import Certifications from "./Components/Certifications";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
       <Education />
       <Experience />
       <Achievements />
+      <Projects />
+      {/* <Certifications /> */}
       <Contact />
     </div>
   );
