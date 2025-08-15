@@ -1,47 +1,93 @@
 import React, { useState } from "react";
 import { db } from "../Firebase/config";
-import {
-  doc,
-  collection,
-  addDoc,
-  serverTimestamp,
-  setDoc,
-} from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 
 function Contact() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: ""
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email";
+    }
+    
+    if (!formData.subject.trim()) {
+      newErrors.subject = "Subject is required";
+    }
+    
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = "Message should be at least 10 characters";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    
     try {
-      const contactsCollectionRef = collection(db, "contacts");
-
-      // Add a new document to the "contacts" collection
-      const docRef = await addDoc(contactsCollectionRef, {
-        name,
-        email,
-        subject,
-        message,
+      await addDoc(collection(db, "contacts"), {
+        ...formData,
+        timestamp: new Date()
       });
-
-      alert("Form Submitted succesfully!");
-      setName("");
-      setEmail("");
-      setSubject("");
-      setMessage("");
+      
+      alert("Message sent successfully!");
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+      });
     } catch (error) {
-      console.error("Error adding document: ", error);
+      console.error("Error sending message: ", error);
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div id="connect" className="bg-[#EEF7FF]">
-      <div className=" p-10">
+      <div className="p-10">
         <div className="grid sm:grid-cols-2 items-center gap-16 p-8 mx-auto max-w-4xl bg-white shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] rounded-md text-[#333] font-[sans-serif]">
-          <div>
+          {/* Left side content remains the same */}
+         <div>
             <h1 class="text-3xl font-extrabold">Let's Talk</h1>
             <p class="text-sm text-gray-400 mt-3">
               Have some big idea or brand to develop and need help? Then reach
@@ -141,40 +187,81 @@ function Contact() {
               </ul>
             </div>
           </div>
-          <form className="ml-auo space-y-4" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Name"
-              className="w-full rounded-md py-2.5 px-4 border text-sm outline-[#007bff]"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full rounded-md py-2.5 px-4 border text-sm outline-[#007bff]"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Subject"
-              className="w-full rounded-md py-2.5 px-4 border text-sm outline-[#007bff]"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-            />
-            <textarea
-              placeholder="Message"
-              rows="6"
-              className="w-full rounded-md px-4 border text-sm pt-2.5 outline-[#007bff]"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            ></textarea>
+          
+          {/* Updated Form */}
+          <form className=" space-y-4" onSubmit={handleSubmit}>
+            <div>
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                className={`w-full rounded-md py-2.5 px-4 border text-sm outline-[#007bff] ${
+                  errors.name ? "border-red-500" : ""
+                }`}
+                value={formData.name}
+                onChange={handleChange}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+              )}
+            </div>
+            
+            <div>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                className={`w-full rounded-md py-2.5 px-4 border text-sm outline-[#007bff] ${
+                  errors.email ? "border-red-500" : ""
+                }`}
+                value={formData.email}
+                onChange={handleChange}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              )}
+            </div>
+            
+            <div>
+              <input
+                type="text"
+                name="subject"
+                placeholder="Subject"
+                className={`w-full rounded-md py-2.5 px-4 border text-sm outline-[#007bff] ${
+                  errors.subject ? "border-red-500" : ""
+                }`}
+                value={formData.subject}
+                onChange={handleChange}
+              />
+              {errors.subject && (
+                <p className="text-red-500 text-xs mt-1">{errors.subject}</p>
+              )}
+            </div>
+            
+            <div>
+              <textarea
+                name="message"
+                placeholder="Message"
+                rows="6"
+                className={`w-full rounded-md px-4 border text-sm pt-2.5 outline-[#007bff] ${
+                  errors.message ? "border-red-500" : ""
+                }`}
+                value={formData.message}
+                onChange={handleChange}
+              ></textarea>
+              {errors.message && (
+                <p className="text-red-500 text-xs mt-1">{errors.message}</p>
+              )}
+            </div>
+            
             <button
               type="submit"
-              className="text-white bg-[#007bff] hover:bg-blue-600 font-semibold rounded-md text-sm px-4 py-2.5 w-full"
+              disabled={isSubmitting}
+              className={`text-white bg-[#007bff] hover:bg-blue-600 font-semibold rounded-md text-sm px-4 py-2.5 w-full ${
+                isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+              }`}
             >
-              Send
+              {isSubmitting ? "Sending..." : "Send"}
             </button>
           </form>
         </div>
