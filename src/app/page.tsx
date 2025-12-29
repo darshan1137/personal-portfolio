@@ -1,3 +1,4 @@
+import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Education from "@/components/Education";
 import AboutMe from "@/components/AboutMe";
@@ -11,6 +12,7 @@ import ContactForm from "@/components/Contact";
 export default function Home() {
   return (
     <>
+      <Navbar />
       <Hero />
       <AboutMe />
       <Education />

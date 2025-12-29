@@ -145,7 +145,7 @@ export default function Dashboard() {
 
     let projectsQuery = query(
       collection(db, "projects"),
-      orderBy("order", "asc"),
+      orderBy("order", "desc"),
       limit(projectsLimit)
     );
 
@@ -185,7 +185,7 @@ export default function Dashboard() {
 
     let achievementsQuery = query(
       collection(db, "achievements"),
-      orderBy("order", "asc"),
+      orderBy("order", "desc"),
       limit(achievementsLimit)
     );
 
@@ -330,7 +330,20 @@ export default function Dashboard() {
       return;
     }
     try {
-      await addDoc(collection(db, "projects"), { ...project, approved: false });
+      // Get the highest order value to ensure new item appears first
+      const maxOrderQuery = query(
+        collection(db, "projects"),
+        orderBy("order", "desc"),
+        limit(1)
+      );
+      const maxOrderSnapshot = await getDocs(maxOrderQuery);
+      const maxOrder = maxOrderSnapshot.empty ? 0 : maxOrderSnapshot.docs[0].data().order || 0;
+      
+      await addDoc(collection(db, "projects"), { 
+        ...project, 
+        approved: false,
+        order: maxOrder + 1  // Set order higher than the current highest
+      });
       setProject({
         title: "",
         description: "",
@@ -357,9 +370,19 @@ export default function Dashboard() {
       return;
     }
     try {
+      // Get the highest order value to ensure new item appears first
+      const maxOrderQuery = query(
+        collection(db, "achievements"),
+        orderBy("order", "desc"),
+        limit(1)
+      );
+      const maxOrderSnapshot = await getDocs(maxOrderQuery);
+      const maxOrder = maxOrderSnapshot.empty ? 0 : maxOrderSnapshot.docs[0].data().order || 0;
+      
       await addDoc(collection(db, "achievements"), {
         ...achievement,
         approved: false,
+        order: maxOrder + 1  // Set order higher than the current highest
       });
       setAchievement({
         title: "",
@@ -489,14 +512,14 @@ export default function Dashboard() {
 
   // --- Tailwind CSS Helper Classes ---
   const inputClassName = (hasError: boolean) =>
-    `input p-3 rounded-xl bg-slate-800/50 border ${
+    `input p-2 text-sm rounded-lg bg-slate-800/50 border ${
       hasError ? "border-rose-500 ring-2 ring-rose-500/20" : "border-slate-700"
     } focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full text-white placeholder-slate-400 transition-all duration-300`;
 
   const errorTextClassName = "text-rose-400 text-sm mt-1.5 font-medium";
 
   const tabButtonClass = (tabName: string) =>
-    `px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+    `px-4 py-2 text-sm rounded-lg font-semibold transition-all duration-300 ${
       activeTab === tabName
         ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-105"
         : "bg-slate-800/50 text-slate-300 hover:bg-slate-700/70 hover:text-white"
@@ -520,17 +543,17 @@ export default function Dashboard() {
       </div>
       <div className="relative z-10">
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl p-6 md:p-8 mb-8 border border-white/10 backdrop-blur-sm">
+        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl shadow-2xl p-4 md:p-5 mb-6 border border-white/10 backdrop-blur-sm">
           {" "}
-          <div className="absolute inset-0 bg-white/5 rounded-3xl"></div>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="absolute inset-0 bg-white/5 rounded-2xl"></div>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3">
             <div>
-              <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Admin Dashboard</h1>
-              <p className="text-indigo-100 text-sm md:text-base">Manage your portfolio content</p>
+              <h1 className="text-2xl md:text-3xl font-extrabold mb-1">Admin Dashboard</h1>
+              <p className="text-indigo-100 text-xs md:text-sm">Manage your portfolio content</p>
             </div>
             <button
               onClick={handleLogout}
-              className="px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-xl transition-all duration-300 shadow-lg border border-white/20 font-semibold flex items-center gap-2"
+              className="px-4 py-2 text-sm bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-lg transition-all duration-300 shadow-lg border border-white/20 font-semibold flex items-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -568,13 +591,13 @@ export default function Dashboard() {
         {activeTab === "projects" && (
           <>
             {/* Add Project Section */}
-            <section className="mb-8 bg-slate-800/50 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-slate-700">
-              <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-2">
-                <span className="text-2xl">➕</span> Add New Project
+            <section className="mb-6 bg-slate-800/50 backdrop-blur-sm p-4 md:p-5 rounded-xl shadow-xl border border-slate-700">
+              <h2 className="text-lg md:text-xl font-bold mb-4 text-white flex items-center gap-2">
+                <span className="text-lg">➕</span> Add New Project
               </h2>
-              <div className="grid gap-5 md:grid-cols-2">
+              <div className="grid gap-3 md:grid-cols-2">
                 <div>
-                  <label className="block text-slate-300 text-sm font-medium mb-2">
+                  <label className="block text-slate-300 text-xs font-medium mb-1">
                     Project Title
                   </label>
                   <input
@@ -604,7 +627,7 @@ export default function Dashboard() {
                     value={project.description}
                     onChange={(e) => setProject({ ...project, description: e.target.value })}
                     className={`${inputClassName(!!projectErrors.description)} w-full resize-y`}
-                    rows={3}
+                    rows={2}
                   />
                   {projectErrors.description && (
                     <p className={errorTextClassName}>{projectErrors.description}</p>
@@ -622,17 +645,17 @@ export default function Dashboard() {
                   )}
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-slate-300 text-sm font-medium mb-2">
+                  <label className="block text-slate-300 text-xs font-medium mb-1">
                     Project Image
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => handleImageUpload(e, setProject)}
-                    className={`block w-full text-sm text-slate-300
-                              file:mr-4 file:py-3 file:px-6
-                              file:rounded-xl file:border-0
-                              file:text-sm file:font-semibold
+                    className={`block w-full text-xs text-slate-300
+                              file:mr-3 file:py-2 file:px-4
+                              file:rounded-lg file:border-0
+                              file:text-xs file:font-semibold
                               file:bg-gradient-to-r file:from-indigo-600 file:to-purple-600
                               file:text-white file:cursor-pointer
                               hover:file:from-indigo-700 hover:file:to-purple-700
@@ -664,7 +687,7 @@ export default function Dashboard() {
                 </div>
                 <button
                   onClick={addProject}
-                  className="md:col-span-2 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-indigo-500/50 transform hover:scale-[1.02]"
+                  className="md:col-span-2 py-2.5 text-sm rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-indigo-500/50 transform hover:scale-[1.02]"
                 >
                   ➕ Add Project
                 </button>
@@ -672,18 +695,18 @@ export default function Dashboard() {
             </section>
 
             {/* Projects List */}
-            <section className="mb-8">
-              <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-2">
-                <span className="text-2xl">📂</span> All Projects
+            <section className="mb-6">
+              <h2 className="text-lg md:text-xl font-bold mb-4 text-white flex items-center gap-2">
+                <span className="text-lg">📂</span> All Projects
               </h2>
-              <div className="grid lg:grid-cols-2 gap-6">
+              <div className="grid lg:grid-cols-2 gap-4">
                 {projects.map((p: any) => (
                   <div
                     key={p.id}
-                    className="bg-gray-800 p-5 rounded-lg shadow-md border border-gray-700 transition-transform transform hover:scale-[1.02] duration-200"
+                    className="bg-gray-800 p-3 rounded-lg shadow-md border border-gray-700 transition-transform transform hover:scale-[1.02] duration-200"
                   >
-                    <h3 className="text-xl font-semibold text-blue-200 mb-2">{p.title}</h3>
-                    <p className="text-gray-300 text-sm mb-2">{p.description}</p>
+                    <h3 className="text-base font-semibold text-blue-200 mb-1.5">{p.title}</h3>
+                    <p className="text-gray-300 text-xs mb-1.5">{p.description}</p>
                     <p className="text-gray-400 text-xs">Tech Stack: {p.techStack}</p>
                     {p.projectLink && (
                       <a
@@ -753,9 +776,9 @@ export default function Dashboard() {
         {activeTab === "achievements" && (
           <>
             {/* Add Achievement Section */}
-            <section className="mb-10 bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 animate-fade-in">
-              <h2 className="text-2xl font-bold mb-5 text-blue-300">Add New Achievement</h2>
-              <div className="grid gap-4 md:grid-cols-2">
+            <section className="mb-6 bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 animate-fade-in">
+              <h2 className="text-lg md:text-xl font-bold mb-3 text-blue-300">Add New Achievement</h2>
+              <div className="grid gap-3 md:grid-cols-2">
                 <div>
                   <input
                     placeholder="Achievement Title"
@@ -789,7 +812,7 @@ export default function Dashboard() {
                       })
                     }
                     className={`${inputClassName(!!achievementErrors.description)} w-full resize-y`}
-                    rows={3}
+                    rows={2}
                   />
                   {achievementErrors.description && (
                     <p className={errorTextClassName}>{achievementErrors.description}</p>
@@ -804,15 +827,15 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-gray-400 text-sm mb-1">Achievement Image:</label>
+                  <label className="block text-gray-400 text-xs mb-1">Achievement Image:</label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => handleImageUpload(e, setAchievement)}
-                    className={`block w-full text-sm text-gray-400
-                              file:mr-4 file:py-2 file:px-4
+                    className={`block w-full text-xs text-gray-400
+                              file:mr-3 file:py-1.5 file:px-3
                               file:rounded-full file:border-0
-                              file:text-sm file:font-semibold
+                              file:text-xs file:font-semibold
                               file:bg-blue-50 file:text-blue-700
                               hover:file:bg-blue-100 ${
                                 !!achievementErrors.image
@@ -836,7 +859,7 @@ export default function Dashboard() {
                 </div>
                 <button
                   onClick={addAchievement}
-                  className="btn-primary md:col-span-2 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition duration-300"
+                  className="btn-primary md:col-span-2 py-2 text-sm rounded-lg bg-blue-600 hover:bg-blue-700 transition duration-300"
                 >
                   Add Achievement
                 </button>
@@ -844,16 +867,16 @@ export default function Dashboard() {
             </section>
 
             {/* Achievements List */}
-            <section className="mb-10 animate-fade-in">
-              <h2 className="text-2xl font-bold mb-4 text-blue-300">All Achievements</h2>
-              <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <section className="mb-6 animate-fade-in">
+              <h2 className="text-lg md:text-xl font-bold mb-3 text-blue-300">All Achievements</h2>
+              <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {achievements.map((a: any) => (
                   <div
                     key={a.id}
-                    className="bg-gray-800 p-5 rounded-lg shadow-md border border-gray-700 transition-transform transform hover:scale-[1.02] duration-200"
+                    className="bg-gray-800 p-3 rounded-lg shadow-md border border-gray-700 transition-transform transform hover:scale-[1.02] duration-200"
                   >
-                    <h3 className="text-xl font-semibold text-blue-200 mb-2">{a.title}</h3>
-                    <p className="text-gray-300 text-sm mb-1">{a.description}</p>
+                    <h3 className="text-base font-semibold text-blue-200 mb-1.5">{a.title}</h3>
+                    <p className="text-gray-300 text-xs mb-1">{a.description}</p>
                     <p className="text-gray-400 text-xs">Year: {a.year}</p>
                     {a.link && (
                       <a
@@ -925,16 +948,16 @@ export default function Dashboard() {
         {activeTab === "testimonials" && (
           <>
             {/* Testimonials List */}
-            <section className="mb-10 animate-fade-in">
-              <h2 className="text-2xl font-bold mb-4 text-blue-300">All Testimonials</h2>
-              <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <section className="mb-6 animate-fade-in">
+              <h2 className="text-lg md:text-xl font-bold mb-3 text-blue-300">All Testimonials</h2>
+              <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {testimonials.map((t: any) => (
                   <div
                     key={t.id}
-                    className="bg-gray-800 p-5 rounded-lg shadow-md border border-gray-700 transition-transform transform hover:scale-[1.02] duration-200"
+                    className="bg-gray-800 p-3 rounded-lg shadow-md border border-gray-700 transition-transform transform hover:scale-[1.02] duration-200"
                   >
-                    <p className="text-gray-300 italic mb-2">"{t.message}"</p>
-                    <p className="text-gray-400 text-sm mt-1">- {t.author}</p>
+                    <p className="text-gray-300 text-xs italic mb-1.5">"{t.message}"</p>
+                    <p className="text-gray-400 text-xs mt-1">- {t.author}</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {!t.approved && (
                         <button

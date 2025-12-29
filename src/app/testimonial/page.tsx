@@ -6,6 +6,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
 import { ArrowLeft, Send, Star } from "lucide-react";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 export default function TestimonialPage() {
   const [formData, setFormData] = useState({
@@ -41,7 +42,9 @@ export default function TestimonialPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-indigo-950 dark:to-purple-950 py-20 px-4">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-indigo-950 dark:to-purple-950 py-20 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <Link
@@ -167,6 +170,7 @@ export default function TestimonialPage() {
           </div>
         </motion.div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

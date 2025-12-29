@@ -6,6 +6,7 @@ import { db } from "@/lib/firebaseConfig";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
 import { ArrowLeft, Quote, User } from "lucide-react";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 interface Testimonial {
   id: string;
@@ -48,7 +49,9 @@ export default function AllTestimonialsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-indigo-950 dark:to-purple-950 py-20 px-4">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-indigo-950 dark:to-purple-950 py-20 px-4">
       <div className="max-w-7xl mx-auto">
         <Link
           href="/#testimonials"
@@ -169,6 +172,7 @@ export default function AllTestimonialsPage() {
           </>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

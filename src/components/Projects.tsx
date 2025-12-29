@@ -21,6 +21,7 @@ interface Project {
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -29,17 +30,25 @@ export default function Projects() {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const q = query(
-        collection(db, "projects"),
-        where("approved", "==", true),
-        orderBy("order", "asc")
-      );
-      const querySnapshot = await getDocs(q);
-      const projectsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Project[];
-      setProjects(projectsData);
+      try {
+        setLoading(true);
+        const q = query(
+          collection(db, "projects"),
+          where("approved", "==", true),
+          orderBy("order", "desc")
+        );
+        const querySnapshot = await getDocs(q);
+        const projectsData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Project[];
+        console.log("Projects fetched:", projectsData.length); // Debug log
+        setProjects(projectsData);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProjects();
@@ -108,7 +117,14 @@ export default function Projects() {
           Projects
         </motion.h2>
 
-        <div className="relative">
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          </div>
+        ) : projects.length === 0 ? (
+          <p className="text-center text-gray-500 py-12">No projects found.</p>
+        ) : (
+          <div className="relative">
           {/* Navigation Buttons */}
           {projects.length > 0 && (
             <>
@@ -228,7 +244,8 @@ export default function Projects() {
               )}
             </div>
           </motion.div>
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );
